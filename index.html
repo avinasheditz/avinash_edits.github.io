@@ -1,13 +1,615 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avinash Editz | Professional Video Editor Portfolio</title>
+    <meta name="description" content="Cinematic video editor specializing in reels, YouTube, and gaming content.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            accent: '#00f2ff',
+                            dark: '#050505',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { background-color: #050505; color: white; -webkit-font-smoothing: antialiased; }
+        
+        .cinematic-glow { box-shadow: 0 0 20px rgba(0, 242, 255, 0.15); }
+        .hover-glow:hover { box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
+        .text-gradient { background: linear-gradient(to right, white, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f2ff; }
+
+        .modal-active { overflow: hidden; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="font-sans">
+
+    <!-- Loading Intro -->
+    <div id="loader" class="fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center">
+        <div class="text-4xl font-display font-bold tracking-tighter" id="loader-text">
+            AVINASH <span class="text-brand-accent">EDITZ</span>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-brand-accent p-1.5 rounded-lg">
+                    <i data-lucide="video" class="w-6 h-6 text-brand-dark"></i>
+                </div>
+                <span class="font-display font-bold text-2xl tracking-tighter">
+                    AVINASH <span class="text-brand-accent">EDITZ</span>
+                </span>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="#home" class="text-sm font-medium text-gray-400 hover:text-brand-accent transition-colors">Home</a>
+                <a href="#about" class="text-sm font-medium text-gray-400 hover:text-brand-accent transition-colors">About</a>
+                <a href="#portfolio" class="text-sm font-medium text-gray-400 hover:text-brand-accent transition-colors">Portfolio</a>
+                <a href="#pricing" class="text-sm font-medium text-gray-400 hover:text-brand-accent transition-colors">Pricing</a>
+                <a href="#contact" class="text-sm font-medium text-gray-400 hover:text-brand-accent transition-colors">Contact</a>
+                <a href="#contact" class="bg-white text-brand-dark px-5 py-2 rounded-full text-sm font-bold hover:bg-brand-accent transition-colors">Hire Me</a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="md:hidden text-white" id="mobile-menu-toggle">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark/95 backdrop-blur-xl hidden flex flex-col items-center justify-center gap-8">
+        <a href="#home" class="text-3xl font-display font-bold hover:text-brand-accent">Home</a>
+        <a href="#about" class="text-3xl font-display font-bold hover:text-brand-accent">About</a>
+        <a href="#portfolio" class="text-3xl font-display font-bold hover:text-brand-accent">Portfolio</a>
+        <a href="#pricing" class="text-3xl font-display font-bold hover:text-brand-accent">Pricing</a>
+        <a href="#contact" class="text-3xl font-display font-bold hover:text-brand-accent">Contact</a>
+        <button class="absolute top-8 right-8 text-white" id="mobile-menu-close">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+            <div class="absolute inset-0 z-0">
+                <div class="absolute top-1/4 -left-20 w-96 h-96 bg-brand-accent/10 rounded-full blur-[120px]"></div>
+                <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
+                <div class="hero-content">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-accent text-xs font-bold uppercase tracking-[0.2em] mb-6">
+                        Indian Video Editor & Content Creator
+                    </span>
+                    
+                    <h1 class="font-display text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9] mb-8">
+                        TRANSFORMING RAW <br />
+                        <span class="text-gradient">FOOTAGE INTO STORIES</span>
+                    </h1>
+
+                    <p class="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-10 leading-relaxed">
+                        I specialize in cinematic edits, reels, and high-energy gaming content that 
+                        captures attention and scales your presence across social media.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="#portfolio" class="w-full sm:w-auto px-8 py-4 bg-brand-accent text-brand-dark rounded-full font-bold flex items-center justify-center gap-2 hover-glow transition-all">
+                            View My Work <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                        </a>
+                        <a href="#contact" class="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full font-bold flex items-center justify-center gap-2 transition-all text-white">
+                            Start a Project <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 pt-12 border-t border-white/5 hero-stats">
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="500">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Projects Completed</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="150">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Happy Clients</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="50" data-suffix="M+">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Views Generated</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="4">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Years Experience</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-32 bg-white/[0.02]">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-20 items-center">
+                    <div class="relative about-image">
+                        <div class="aspect-square bg-white/5 rounded-3xl overflow-hidden border border-white/10 group">
+                            <img src="https://picsum.photos/seed/editor/800/800" alt="Avinash Editz" class="w-full h-full object-cover transition-all duration-700">
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 bg-brand-accent p-6 rounded-2xl text-brand-dark shadow-2xl">
+                            <div class="text-4xl font-display font-bold">4+</div>
+                            <div class="text-xs font-bold uppercase tracking-widest">Years Passion</div>
+                        </div>
+                    </div>
+
+                    <div class="about-text">
+                        <span class="text-brand-accent font-bold uppercase tracking-widest text-sm mb-4 inline-block">My Story</span>
+                        <h2 class="text-4xl md:text-5xl font-display font-bold mb-6 tracking-tighter">BEYOND THE <span class="text-gradient">TIMELINE</span></h2>
+                        <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                            I am Avinash Editz, a passionate Indian video editor specializing in cinematic edits, reels, 
+                            YouTube videos, gaming content, and social media content creation. I transform raw footage 
+                            into engaging visual stories that capture attention.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <i data-lucide="zap" class="text-brand-accent"></i>
+                                <div><h4 class="font-bold text-white mb-1">Fast Delivery</h4><p class="text-xs text-gray-500">24-48 hours delivery</p></div>
+                            </div>
+                            <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <i data-lucide="award" class="text-brand-accent"></i>
+                                <div><h4 class="font-bold text-white mb-1">Quality Focus</h4><p class="text-xs text-gray-500">Cinematic grading</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="py-24 border-t border-white/5">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-4">THE ARSENAL</h2>
+                    <p class="text-gray-500">Tools and skills I utilize to create magic</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold mb-8 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-brand-accent"></span> Software Proficiency
+                        </h3>
+                        <div class="skill-bar">
+                            <div class="flex justify-between mb-2"><span class="text-gray-300">Premiere Pro</span><span class="text-brand-accent font-bold">95%</span></div>
+                            <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-brand-accent bar-fill" style="width: 95%"></div></div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="flex justify-between mb-2"><span class="text-gray-300">After Effects</span><span class="text-brand-accent font-bold">85%</span></div>
+                            <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-brand-accent bar-fill" style="width: 85%"></div></div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="flex justify-between mb-2"><span class="text-gray-300">CapCut</span><span class="text-brand-accent font-bold">98%</span></div>
+                            <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-brand-accent bar-fill" style="width: 98%"></div></div>
+                        </div>
+                    </div>
+                    <div class="bg-white/2 p-8 rounded-3xl border border-white/5">
+                         <h3 class="text-xl font-bold mb-8 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-brand-accent"></span> Core Expertises
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400">Cinematic Color Grading</span>
+                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400">Motion Graphics</span>
+                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400">Sound Design</span>
+                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400">Gaming Highlights</span>
+                            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-gray-400">Thumbnail Design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="py-32">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div>
+                        <span class="text-brand-accent font-bold uppercase tracking-widest text-sm mb-4 inline-block">Selected Works</span>
+                        <h2 class="text-4xl md:text-5xl font-display font-bold tracking-tighter">PORTFOLIO <span class="text-gradient">SHOWCASE</span></h2>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="portfolio-filters">
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-brand-accent text-brand-dark filter-btn active" data-filter="all">All</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="cinematic">Cinematic</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="reels">Reels</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="gaming">Gaming</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-grid">
+                    <!-- Project Items -->
+                    <div class="portfolio-item cinematic relative aspect-video rounded-3xl overflow-hidden border border-white/5 group">
+                        <img src="https://picsum.photos/seed/travel/800/600" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-brand-dark/80 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-brand-accent text-xs font-bold uppercase">Cinematic</span>
+                            <h3 class="text-xl font-bold">Travel Edit</h3>
+                        </div>
+                    </div>
+                    <div class="portfolio-item reels relative aspect-video rounded-3xl overflow-hidden border border-white/5 group">
+                        <img src="https://picsum.photos/seed/reel/800/600" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-brand-dark/80 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-brand-accent text-xs font-bold uppercase">Reels</span>
+                            <h3 class="text-xl font-bold">Viral Edit</h3>
+                        </div>
+                    </div>
+                    <div class="portfolio-item gaming relative aspect-video rounded-3xl overflow-hidden border border-white/5 group">
+                        <img src="https://picsum.photos/seed/gaming/800/600" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-brand-dark/80 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-brand-accent text-xs font-bold uppercase">Gaming</span>
+                            <h3 class="text-xl font-bold">Pro Montage</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="py-32 bg-white/[0.02]">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-display font-bold tracking-tighter mb-4">FAIR <span class="text-gradient">PRICING</span></h2>
+                    <p class="text-gray-500">Tiered packages for every creator</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Cards -->
+                    <div class="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-brand-accent/50 transition-all group">
+                        <h3 class="text-xl font-bold mb-2">BASIC</h3>
+                        <div class="text-4xl font-display font-bold mb-6">₹1,499</div>
+                        <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Simple cuts</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Basic grading</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> 1 Revision</li>
+                        </ul>
+                        <button class="w-full py-4 rounded-xl bg-white/10 font-bold hover:bg-brand-accent hover:text-brand-dark transition-all open-contact">Get Started</button>
+                    </div>
+                    <div class="p-8 rounded-3xl bg-white/10 border border-brand-accent/50 cinematic-glow relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-brand-accent text-brand-dark px-4 py-1 text-[10px] font-bold uppercase">Popular</div>
+                        <h3 class="text-xl font-bold mb-2">STANDARD</h3>
+                        <div class="text-4xl font-display font-bold mb-6">₹3,999</div>
+                        <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Advanced FX</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Sound Design</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> 48h Delivery</li>
+                        </ul>
+                        <button class="w-full py-4 rounded-xl bg-brand-accent text-brand-dark font-bold hover:bg-white transition-all open-contact">Most Popular</button>
+                    </div>
+                    <div class="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-brand-accent/50 transition-all group">
+                        <h3 class="text-xl font-bold mb-2">PREMIUM</h3>
+                        <div class="text-4xl font-display font-bold mb-6">₹8,999</div>
+                        <ul class="space-y-4 mb-8 text-sm text-gray-400">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Cinematic Grade</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> VFX Magic</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-accent"></i> Priority Sup</li>
+                        </ul>
+                        <button class="w-full py-4 rounded-xl bg-white/10 font-bold hover:bg-brand-accent hover:text-brand-dark transition-all open-contact">Go Elite</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-32">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-display font-bold tracking-tighter">CLIENT <span class="text-gradient">VOICES</span></h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="p-8 bg-white/5 rounded-3xl border border-white/5">
+                        <div class="flex gap-1 mb-4">
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                        </div>
+                        <p class="text-gray-400 italic mb-6">"Amazing work! Viral results."</p>
+                        <div class="text-sm font-bold">- Client A</div>
+                    </div>
+                    <div class="p-8 bg-white/5 rounded-3xl border border-white/5">
+                        <div class="flex gap-1 mb-4">
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent"></i>
+                        </div>
+                        <p class="text-gray-400 italic mb-6">"Best gaming montages."</p>
+                        <div class="text-sm font-bold">- Client B</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-32 bg-brand-dark">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid lg:grid-cols-2 gap-20 items-center">
+                    <div>
+                        <h2 class="text-5xl font-display font-bold mb-8 tracking-tighter">LET'S CREATE <span class="text-gradient">SOMETHING EPIC</span></h2>
+                        <div class="space-y-6 mb-12">
+                            <a href="mailto:avinashpandit1221@gmail.com" class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-brand-accent transition-all"><i data-lucide="mail"></i></div>
+                                <div><p class="text-xs text-gray-500 font-bold uppercase">Email</p><p class="text-white">avinashpandit1221@gmail.com</p></div>
+                            </a>
+                            <a href="tel:931049121" class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-brand-accent transition-all"><i data-lucide="phone"></i></div>
+                                <div><p class="text-xs text-gray-500 font-bold uppercase">Phone</p><p class="text-white">9310491221</p></div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-12 rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl text-center">
+                        <div class="w-20 h-20 bg-brand-accent/20 rounded-full flex items-center justify-center mb-8"><i data-lucide="mail" class="w-10 h-10 text-brand-accent"></i></div>
+                        <h3 class="text-2xl font-display font-bold mb-8">Ready to Start?</h3>
+                        <button class="px-12 py-5 bg-brand-accent text-brand-dark rounded-2xl font-bold text-lg hover-glow transition-all open-contact">Send Contact</button>
+                        <a href="https://wa.me/919310491221" target="_blank" class="mt-8 text-green-400 font-bold hover:text-green-300">Quick WhatsApp <i data-lucide="message-circle" class="inline w-4 h-4"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 text-center text-gray-500 text-sm">
+        <p>© <span id="year"></span> Avinash Editz Portfolio. All rights reserved.</p>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" id="modal-overlay"></div>
+        <div class="relative w-full max-w-xl bg-brand-dark border border-white/10 rounded-[32px] overflow-hidden p-8 animate-in fade-in zoom-in duration-300">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-display font-bold">New Inquiry</h3>
+                <button id="modal-close" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            </div>
+            
+            <div class="flex gap-2 p-1 bg-white/5 rounded-2xl mb-8" id="tab-headers">
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn active bg-brand-accent text-brand-dark" data-tab="0">Name</button>
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="1">Purpose</button>
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="2">Mail</button>
+            </div>
+
+            <form id="inquiry-form">
+                <div class="tab-content active" data-tab-id="0">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name</label>
+                    <input type="text" id="inquiry-name" required placeholder="Your name" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none">
+                </div>
+                <div class="tab-content" data-tab-id="1">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Purpose</label>
+                    <select id="inquiry-type" class="w-full bg-[#111] border border-white/10 rounded-2xl p-4 outline-none">
+                        <option>Cinematic Edit</option>
+                        <option>YouTube Video</option>
+                        <option>Reels / Shorts</option>
+                        <option>Gaming Edit</option>
+                    </select>
+                </div>
+                <div class="tab-content" data-tab-id="2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Message</label>
+                    <textarea id="inquiry-message" required rows="3" placeholder="Details..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 outline-none resize-none"></textarea>
+                    <input type="email" id="inquiry-email" required placeholder="Your email" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none">
+                </div>
+
+                <div class="flex gap-4 mt-8">
+                    <button type="button" id="tab-prev" class="flex-1 py-4 bg-white/5 rounded-2xl font-bold hidden">Back</button>
+                    <button type="button" id="tab-next" class="flex-1 py-4 bg-brand-accent text-brand-dark rounded-2xl font-bold">Next</button>
+                    <button type="submit" id="tab-submit" class="flex-1 py-4 bg-brand-accent text-brand-dark rounded-2xl font-bold hidden">Send Inquiry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Constants
+        const WHATSAPP_NUMBER = "919310491221";
+
+        // DOM elements
+        const navbar = document.getElementById('navbar');
+        const loader = document.getElementById('loader');
+        const modal = document.getElementById('contact-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalClose = document.getElementById('modal-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileToggle = document.getElementById('mobile-menu-toggle');
+        const mobileClose = document.getElementById('mobile-menu-close');
+        const inquiryForm = document.getElementById('inquiry-form');
+
+        // Scroll Logic
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-brand-dark/80', 'backdrop-blur-md', 'border-b', 'border-white/10', 'py-4');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-brand-dark/80', 'backdrop-blur-md', 'border-b', 'border-white/10', 'py-4');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // Mobile Menu
+        mobileToggle.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+        mobileClose.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        // Modal Logic
+        let currentTab = 0;
+        const openModal = () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.classList.add('modal-active');
+            updateTabs();
+        };
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.classList.remove('modal-active');
+        };
+        document.querySelectorAll('.open-contact').forEach(btn => btn.addEventListener('click', openModal));
+        modalOverlay.addEventListener('click', closeModal);
+        modalClose.addEventListener('click', closeModal);
+
+        // Tab Logic
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const btnNext = document.getElementById('tab-next');
+        const btnPrev = document.getElementById('tab-prev');
+        const btnSubmit = document.getElementById('tab-submit');
+
+        const updateTabs = () => {
+            tabContents.forEach((c, i) => c.classList.toggle('active', i === currentTab));
+            tabBtns.forEach((b, i) => {
+                b.classList.toggle('active', i === currentTab);
+                if (i === currentTab) {
+                    b.classList.add('bg-brand-accent', 'text-brand-dark');
+                } else {
+                    b.classList.remove('bg-brand-accent', 'text-brand-dark');
+                }
+            });
+
+            btnPrev.classList.toggle('hidden', currentTab === 0);
+            btnNext.classList.toggle('hidden', currentTab === 2);
+            btnSubmit.classList.toggle('hidden', currentTab < 2);
+        };
+
+        btnNext.addEventListener('click', () => { if (currentTab < 2) { currentTab++; updateTabs(); } });
+        btnPrev.addEventListener('click', () => { if (currentTab > 0) { currentTab--; updateTabs(); } });
+
+        // Form Submit -> WhatsApp
+        inquiryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('inquiry-name').value;
+            const type = document.getElementById('inquiry-type').value;
+            const message = document.getElementById('inquiry-message').value;
+            const email = document.getElementById('inquiry-email').value;
+
+            const waMessage = encodeURIComponent(
+                `🚀 *NEW ORDER INQUIRY* 🚀\n\n` +
+                `*Client Name:* ${name}\n` +
+                `*Email:* ${email}\n` +
+                `*Service:* ${type}\n\n` +
+                `*Project Details:* ${message}`
+            );
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`, '_blank');
+            closeModal();
+            inquiryForm.reset();
+            currentTab = 0;
+            updateTabs();
+        });
+
+        // Portfolio Filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+                filterBtns.forEach(b => b.classList.remove('active', 'bg-brand-accent', 'text-brand-dark'));
+                filterBtns.forEach(b => b.classList.add('bg-white/5', 'text-gray-500'));
+                
+                btn.classList.add('active', 'bg-brand-accent', 'text-brand-dark');
+                btn.classList.remove('bg-white/5', 'text-gray-500');
+
+                portfolioItems.forEach(item => {
+                    if (filter === 'all' || item.classList.contains(filter)) {
+                        gsap.to(item, { opacity: 1, scale: 1, duration: 0.4, display: 'block' });
+                    } else {
+                        gsap.to(item, { opacity: 0, scale: 0.8, duration: 0.4, display: 'none' });
+                    }
+                });
+            });
+        });
+
+        // Animations (GSAP)
+        window.onload = () => {
+            // Hide Loader
+            gsap.to(loader, { opacity: 0, duration: 0.8, delay: 1, onComplete: () => loader.style.display = 'none' });
+
+            // Hero Entrance
+            gsap.from(".hero-content > *", { y: 30, opacity: 0, stagger: 0.1, duration: 0.8, delay: 1.5 });
+            gsap.from(".hero-stats > *", { y: 20, opacity: 0, stagger: 0.1, duration: 0.8, delay: 2 });
+
+            // Counter Logic
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.dataset.target;
+                const suffix = counter.dataset.suffix || "";
+                ScrollTrigger.create({
+                    trigger: counter,
+                    onEnter: () => {
+                        let count = 0;
+                        const updateCount = () => {
+                            const increment = target / 50;
+                            if (count < target) {
+                                count += increment;
+                                counter.innerText = Math.round(count) + suffix;
+                                setTimeout(updateCount, 20);
+                            } else {
+                                counter.innerText = target + suffix;
+                            }
+                        };
+                        updateCount();
+                    }
+                });
+            });
+
+            // Scroll Triggers for Sections
+            gsap.utils.toArray('section').forEach(section => {
+                gsap.from(section.querySelectorAll('.max-w-7xl > *'), {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1
+                });
+            });
+        };
+
+        // Footer Year
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
